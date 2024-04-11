@@ -1,0 +1,84 @@
+#
+# A single line theme with Git information on the left.
+#
+# Authors:
+#   Kyle West <kswest@gmail.com>
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#   Joseph Toney <wumbabum@gmail.com>
+#
+# Features:
+#   - Indicates dirty Git repository.
+#   - Indicates vi modes.
+#
+# Screenshots:
+#   http://i.imgur.com/dCwhynn.png
+#
+
+#
+# 16 Terminal Colors
+# -- ---------------
+#  0 black
+#  1 red
+#  2 green
+#  3 yellow
+#  4 blue
+#  5 magenta
+#  6 cyan
+#  7 white
+#  8 bright black
+#  9 bright red
+# 10 bright green
+# 11 bright yellow
+# 12 bright blue
+# 13 bright magenta
+# 14 bright cyan
+# 15 bright white
+#
+
+function prompt_jtoney_precmd {
+  setopt LOCAL_OPTIONS
+  unsetopt XTRACE KSH_ARRAYS
+
+  _prompt_pwd=$(prompt-pwd)
+
+  # Get Git repository information.
+  if (( $+functions[git-info] )); then
+    git-info
+  fi
+}
+
+function prompt_jtoney_setup {
+  setopt LOCAL_OPTIONS
+  unsetopt XTRACE KSH_ARRAYS
+  prompt_opts=(cr percent sp subst)
+
+  # Load required functions.
+  autoload -Uz add-zsh-hook
+
+  # Add hook for calling git-info before each command.
+  add-zsh-hook precmd prompt_jtoney_precmd
+
+  # Tell prezto we can manage this prompt
+  zstyle ':prezto:module:prompt' managed 'yes'
+
+  # Set editor-info parameters.
+  zstyle ':prezto:module:editor:info:completing' format '%B%F{red}...%f%b'
+  zstyle ':prezto:module:editor:info:keymap:primary' format "%B%F{green}❯%f%b"
+  zstyle ':prezto:module:editor:info:keymap:alternate' format "%B%F{magenta}❮%f%b"
+
+  # Set git-info parameters.
+  zstyle ':prezto:module:git:info' verbose 'no'
+  zstyle ':prezto:module:git:info:branch' format '%F{5}(%F{magenta}%b%f%F{5})'
+  zstyle ':prezto:module:git:info:dirty' format '%B%F{red}!%f%b'
+  zstyle ':prezto:module:git:info:indexed' format ' '
+  zstyle ':prezto:module:git:info:unindexed' format ' '
+  zstyle ':prezto:module:git:info:untracked' format ' '
+  zstyle ':prezto:module:git:info:keys' format 'prompt' '%b%D '
+
+  # Define prompts.
+  PROMPT='%F{12}${_prompt_pwd}%(!. %B%F{1}#%f%b.)%f ${git_info:+${(e)git_info[prompt]}}${editor_info[keymap]} '
+  RPROMPT=''
+}
+
+prompt_jtoney_setup "$@"
+# vim: ft=zsh
