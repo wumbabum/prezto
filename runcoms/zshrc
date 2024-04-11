@@ -11,3 +11,12 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 # Customize to your needs...
+
+plugins=(git asdf)
+
+# path additions
+. "$HOME/.asdf/asdf.sh"
+
+alias cdcb="cd ~/Work/Citybase"
+
+cdcb
